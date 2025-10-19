@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Console appender with structured key=value pattern and MDC support -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} level=%-5level logger=%logger{36} thread=%thread corrId=%X{correlationId} traceId=%X{traceId} spanId=%X{spanId} msg="%replace(%m){'\n','\\n'}"%n</pattern>
+            <immediateFlush>true</immediateFlush>
+        </encoder>
+    </appender>
+
+    <!-- Reduce noise from Spring and Hibernate in tests while keeping our package at INFO -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.springframework.web" level="INFO"/>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

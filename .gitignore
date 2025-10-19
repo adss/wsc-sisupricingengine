@@ -1,0 +1,69 @@
+# === Java / Maven build outputs ===
+/target/
+*.class
+
+# Maven release / helper files
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# Spring Boot logs
+spring.log
+*.log
+hs_err_pid*
+replay_pid*
+
+# IDE settings
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+
+# OS-specific cruft
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+
+# Local environment and overrides
+.env
+.env.*
+!.env.example
+liquibase.properties
+
+# Spring config overrides (keep the default application.yml committed)
+application-local.yml
+application-*.yml
+!application.yml
+application-*.properties
+!application.properties
+
+# Database files (if a file-based DB is ever used locally)
+*.h2.db
+*.mv.db
+*.db
+*.log.db
+
+# Reports / coverage / analysis
+/coverage/
+jacoco.exec
+.sonar/
+.scannerwork/
+.site/
+
+# Generated sources (usually under target/, but keep in case of custom dirs)
+/generated/
+/out/
+/build/

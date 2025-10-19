@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: wsc-sisupricingengine
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: ${spring.application.name}
+    description: SISU Pricing Engine service with Actuator enabled
+    version: ${project.version:0.0.1-SNAPSHOT}
