@@ -1,6 +1,6 @@
 package com.inditex.sisuprice.domain.usecase;
 
-import com.inditex.sisuprice.api.dto.PriceResponse;
+import com.inditex.sisuprice.domain.PriceRecord;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -11,13 +11,13 @@ import java.util.Optional;
 public interface PriceQueryUseCase {
 
     /**
-     * Queries for the price details based on brand, product, and application date.
+     * Queries the price information for a specific product and brand at a given application date.
      *
-     * @param brandId          the identifier of the brand
-     * @param productId        the identifier of the product
-     * @param applicationDate  the date and time for which the price information is requested
-     * @return an Optional containing the price details if found, otherwise an empty Optional
+     * @param brandId the ID of the brand associated with the product
+     * @param productId the ID of the product for which price is being queried
+     * @param applicationDate the date and time when the price should be applicable
+     * @return an Optional containing the price response if an applicable price is found, or an empty Optional otherwise
      */
-    Optional<PriceResponse> query(int brandId, long productId, LocalDateTime applicationDate);
+    Optional<PriceRecord> query(int brandId, long productId, LocalDateTime applicationDate);
 
 }

@@ -1,7 +1,6 @@
 package com.inditex.sisuprice.application;
 
 import com.inditex.sisuprice.api.dto.PriceResponse;
-import com.inditex.sisuprice.api.mapper.PriceRecordMapper;
 import com.inditex.sisuprice.domain.PriceRecord;
 import com.inditex.sisuprice.domain.repository.PriceRepository;
 import org.junit.jupiter.api.Test;
@@ -22,8 +21,6 @@ class PriceQueryUseCaseImplTest {
 
     @Mock
     PriceRepository repository;
-    @Mock
-    PriceRecordMapper mapper;
 
     @InjectMocks
     PriceQueryUseCaseImpl useCase;
@@ -45,17 +42,27 @@ class PriceQueryUseCaseImplTest {
     void returnsMappedResponseWhenRepositoryFindsRecord() {
         var date = LocalDateTime.parse("2020-06-14T10:00:00");
         var record = domain();
-        var response = new PriceResponse(35455L, 1, 2, record.startDate(), record.endDate(), record.price(), record.curr());
+        var response = new PriceResponse(
+                record.productId(),
+                record.brandId(),
+                record.priceList(),
+                record.startDate(),
+                record.endDate(),
+                record.price(),
+                record.curr()
+        );
 
         when(repository.findApplicable(1, 35455L, date)).thenReturn(Optional.of(record));
-        when(mapper.toResponse(record)).thenReturn(response);
 
         var result = useCase.query(1, 35455L, date);
+
         assertTrue(result.isPresent());
-        assertEquals(response, result.get());
+        assertEquals(35455L, result.get().productId());
+        assertEquals(1, result.get().brandId());
+        assertEquals(2, result.get().priceList());
+        assertEquals(new BigDecimal("25.45"), result.get().price());
 
         verify(repository).findApplicable(1, 35455L, date);
-        verify(mapper).toResponse(record);
     }
 
     @Test
@@ -64,8 +71,18 @@ class PriceQueryUseCaseImplTest {
         when(repository.findApplicable(1, 35455L, date)).thenReturn(Optional.empty());
 
         var result = useCase.query(1, 35455L, date);
+
         assertTrue(result.isEmpty());
         verify(repository).findApplicable(1, 35455L, date);
-        verifyNoInteractions(mapper);
+    }
+
+    @Test
+    void queryDelegatesToRepository() {
+        var date = LocalDateTime.parse("2020-06-14T16:00:00");
+        when(repository.findApplicable(anyInt(), anyLong(), any())).thenReturn(Optional.empty());
+
+        useCase.query(99, 888L, date);
+
+        verify(repository).findApplicable(99, 888L, date);
     }
 }

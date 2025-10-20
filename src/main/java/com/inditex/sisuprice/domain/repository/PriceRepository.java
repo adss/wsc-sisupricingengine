@@ -11,13 +11,14 @@ import java.util.Optional;
  */
 public interface PriceRepository {
 
+    /**
+     * Find all price records.
+     */
     List<PriceRecord> findAll();
 
-    default Optional<PriceRecord> findApplicable(int brandId, long productId, LocalDateTime applicationDate) {
-        return findAll().stream()
-                .filter(p -> p.brandId() == brandId)
-                .filter(p -> p.productId() == productId)
-                .filter(p -> !applicationDate.isBefore(p.startDate()) && applicationDate.isBefore(p.endDate()))
-                .min((a, b) -> Integer.compare(b.priority(), a.priority()));
-    }
+    /**
+     * Find the applicable price for the given criteria.
+     * Implementation should apply business rules (date range, priority).
+     */
+    Optional<PriceRecord> findApplicable(int brandId, long productId, LocalDateTime applicationDate);
 }

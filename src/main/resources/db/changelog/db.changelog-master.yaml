@@ -65,6 +65,7 @@ databaseChangeLog:
                   name: END_DATE
               - column:
                   name: PRIORITY
+                  descending: true
   - changeSet:
       id: 002-seed-prices
       author: junie

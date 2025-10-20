@@ -24,6 +24,7 @@ class PriceDbRepositoryTest {
 
     @Mock
     PriceJpaRepository jpaRepository;
+
     @Mock
     PriceEntityMapper mapper;
 
@@ -78,24 +79,53 @@ class PriceDbRepositoryTest {
     }
 
     @Test
-    void findApplicableDelegatesToJpaAndMapsFirst() {
+    void findAllReturnsEmptyListWhenNoRecords() {
+        when(jpaRepository.findAll()).thenReturn(List.of());
+
+        var list = repository.findAll();
+
+        assertTrue(list.isEmpty());
+        verify(jpaRepository).findAll();
+        verifyNoInteractions(mapper);
+    }
+
+    @Test
+    void findApplicableDelegatesToJpaAndMaps() {
         var e = entity(1L);
-        when(jpaRepository.findTopApplicable(1, 35455L, LocalDateTime.parse("2020-06-14T10:00:00")))
-                .thenReturn(List.of(e));
+        var date = LocalDateTime.parse("2020-06-14T10:00:00");
+        when(jpaRepository.findTopApplicable(1, 35455L, date))
+                .thenReturn(Optional.of(e));
         when(mapper.toDomain(e)).thenReturn(domain());
 
-        Optional<PriceRecord> result = repository.findApplicable(1, 35455L, LocalDateTime.parse("2020-06-14T10:00:00"));
+        Optional<PriceRecord> result = repository.findApplicable(1, 35455L, date);
 
         assertTrue(result.isPresent());
         assertEquals(35455L, result.get().productId());
-        verify(jpaRepository).findTopApplicable(1, 35455L, LocalDateTime.parse("2020-06-14T10:00:00"));
+        assertEquals(1, result.get().brandId());
+        assertEquals(new BigDecimal("25.45"), result.get().price());
+        verify(jpaRepository).findTopApplicable(1, 35455L, date);
         verify(mapper).toDomain(e);
     }
 
     @Test
     void findApplicableReturnsEmptyWhenJpaReturnsEmpty() {
-        when(jpaRepository.findTopApplicable(anyInt(), anyLong(), any())).thenReturn(List.of());
-        var result = repository.findApplicable(9, 9L, LocalDateTime.parse("2020-01-01T00:00:00"));
+        var date = LocalDateTime.parse("2020-01-01T00:00:00");
+        when(jpaRepository.findTopApplicable(9, 9L, date)).thenReturn(Optional.empty());
+
+        var result = repository.findApplicable(9, 9L, date);
+
         assertTrue(result.isEmpty());
+        verify(jpaRepository).findTopApplicable(9, 9L, date);
+        verifyNoInteractions(mapper);
+    }
+
+    @Test
+    void findApplicablePassesCorrectParameters() {
+        var date = LocalDateTime.parse("2020-12-25T15:30:00");
+        when(jpaRepository.findTopApplicable(5, 12345L, date)).thenReturn(Optional.empty());
+
+        repository.findApplicable(5, 12345L, date);
+
+        verify(jpaRepository).findTopApplicable(5, 12345L, date);
     }
 }

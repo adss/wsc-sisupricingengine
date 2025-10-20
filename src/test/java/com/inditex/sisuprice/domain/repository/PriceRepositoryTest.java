@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Comparator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,10 +18,20 @@ class PriceRepositoryTest {
     private record InMemoryPriceRepository(List<PriceRecord> data) implements PriceRepository {
 
         @Override
-            public List<PriceRecord> findAll() {
-                return data;
-            }
+        public List<PriceRecord> findAll() {
+            return data;
         }
+
+        @Override
+        public Optional<PriceRecord> findApplicable(int brandId, long productId, LocalDateTime applicationDate) {
+            return data.stream()
+                    .filter(r -> r.brandId() == brandId)
+                    .filter(r -> r.productId() == productId)
+                    .filter(r -> !r.startDate().isAfter(applicationDate))
+                    .filter(r -> r.endDate().isAfter(applicationDate))
+                    .max(Comparator.comparingInt(PriceRecord::priority));
+        }
+    }
 
     private static PriceRecord rec(int brandId, long productId, String start, String end,
                                    int priceList, int priority, double price, String curr) {

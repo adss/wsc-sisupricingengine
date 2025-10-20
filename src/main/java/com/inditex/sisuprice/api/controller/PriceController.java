@@ -1,5 +1,6 @@
 package com.inditex.sisuprice.api.controller;
 
+import com.inditex.sisuprice.api.mapper.PriceRecordMapper;
 import com.inditex.sisuprice.domain.usecase.PriceQueryUseCase;
 import com.inditex.sisuprice.api.dto.PriceResponse;
 import jakarta.validation.constraints.Min;
@@ -20,10 +21,13 @@ import java.time.LocalDateTime;
 @Slf4j
 public class PriceController {
 
-    private final PriceQueryUseCase service;
+    private final PriceQueryUseCase useCase;
 
-    public PriceController(PriceQueryUseCase service) {
-        this.service = service;
+    private final PriceRecordMapper mapper;
+
+    public PriceController(PriceQueryUseCase useCase, PriceRecordMapper mapper) {
+        this.useCase = useCase;
+        this.mapper = mapper;
     }
 
     @GetMapping
@@ -33,9 +37,11 @@ public class PriceController {
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime applicationDate) {
 
         log.info("request getPrice brandId={} productId={} date={}", brandId, productId, applicationDate);
-        return service.query(brandId, productId, applicationDate)
-                .map(response -> {
-                    log.info("price found brandId={} productId={} priceList={} valid=[{}, {})", response.brandId(), response.productId(), response.priceList(), response.startDate(), response.endDate());
+        return useCase.query(brandId, productId, applicationDate)
+                .map(priceRecord -> {
+                    PriceResponse response = mapper.toResponse(priceRecord);
+                    log.info("price found brandId={} productId={} priceList={} valid=[{}, {})", response.brandId(),
+                            response.productId(), response.priceList(), response.startDate(), response.endDate());
                     return ResponseEntity.ok(response);
                 })
                 .orElseGet(() -> {
