@@ -1,6 +1,5 @@
 package com.inditex.sisuprice.application;
 
-import com.inditex.sisuprice.api.dto.PriceResponse;
 import com.inditex.sisuprice.domain.PriceRecord;
 import com.inditex.sisuprice.domain.repository.PriceRepository;
 import org.junit.jupiter.api.Test;
@@ -39,20 +38,11 @@ class PriceQueryUseCaseImplTest {
     }
 
     @Test
-    void returnsMappedResponseWhenRepositoryFindsRecord() {
+    void returnsRecordWhenRepositoryFindsRecord() {
         var date = LocalDateTime.parse("2020-06-14T10:00:00");
-        var record = domain();
-        var response = new PriceResponse(
-                record.productId(),
-                record.brandId(),
-                record.priceList(),
-                record.startDate(),
-                record.endDate(),
-                record.price(),
-                record.curr()
-        );
+        var priceRecord = domain();
 
-        when(repository.findApplicable(1, 35455L, date)).thenReturn(Optional.of(record));
+        when(repository.findApplicable(1, 35455L, date)).thenReturn(Optional.of(priceRecord));
 
         var result = useCase.query(1, 35455L, date);
 
@@ -61,6 +51,7 @@ class PriceQueryUseCaseImplTest {
         assertEquals(1, result.get().brandId());
         assertEquals(2, result.get().priceList());
         assertEquals(new BigDecimal("25.45"), result.get().price());
+        assertEquals("EUR", result.get().curr());
 
         verify(repository).findApplicable(1, 35455L, date);
     }

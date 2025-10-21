@@ -7,5 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface PriceRecordMapper {
 
-    PriceResponse toResponse(PriceRecord record);
+    PriceResponse toResponse(PriceRecord priceRecord);
 }
