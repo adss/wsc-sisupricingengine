@@ -88,6 +88,21 @@ Validation errors return 400 Bad Request with a JSON body providing a messages a
   - DIP: Service depends on `PriceRepository` abstraction
 - REST best practices: GET with query params, validation, 404 for not found, 400 for bad input, stable DTO (`PriceResponse`).
 
+## Technologies
+
+- Java 21: Modern, LTS JVM runtime used to build and run the service.
+- Spring Boot (Web, Validation): Provides the REST API layer and request validation annotations.
+- Spring Data JPA: Data access abstraction over JPA to interact with the database via repositories.
+- H2 Database (runtime): In‑memory relational database used for local development, tests, and examples.
+- Liquibase: Database change management to version and apply schema and seed data on startup.
+- MapStruct: Compile‑time mapper to transform persistence/domain objects into API DTOs efficiently.
+- Lombok: Reduces boilerplate (getters, constructors, logging) via annotations.
+- springdoc-openapi (Swagger UI): Generates OpenAPI docs and interactive Swagger UI.
+- Spring Boot Actuator: Operational endpoints for health, info, and metrics.
+- Caffeine + Spring Cache: In‑memory caching of use‑case results to improve response times.
+- SLF4J + Logback: Structured logging with MDC; correlation ID propagated per request.
+- JUnit 5 + Mockito: Unit and integration testing framework and mocking library.
+
 ## Performance
 
 - Efficient data extraction when using DB:
@@ -149,19 +164,3 @@ src/main/java/com/inditex/price/
 src/main/resources/
 - db/changelog/db.changelog-master.yaml (Liquibase schema and seed data)
 - schema.sql, data.sql (legacy scripts, not used when Liquibase is enabled)
-
-## Technologies Used
-
-- Java 21: Modern, LTS JVM runtime used to build and run the service.
-- Spring Boot (Web, Validation): Provides the REST API layer and request validation annotations.
-- Spring Data JPA: Data access abstraction over JPA to interact with the database via repositories.
-- H2 Database (runtime): In‑memory relational database used for local development, tests, and examples.
-- Liquibase: Database change management to version and apply schema and seed data on startup.
-- MapStruct: Compile‑time mapper to transform persistence/domain objects into API DTOs efficiently.
-- Lombok: Reduces boilerplate (getters, constructors, logging) via annotations.
-- springdoc-openapi (Swagger UI): Generates OpenAPI docs and interactive Swagger UI.
-- Spring Boot Actuator: Operational endpoints for health, info, and metrics.
-- Caffeine + Spring Cache: In‑memory caching of use‑case results to improve response times.
-- SLF4J + Logback: Structured logging with MDC; correlation ID propagated per request.
-- JUnit 5 + Mockito: Unit and integration testing framework and mocking library.
-
